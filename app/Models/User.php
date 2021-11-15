@@ -23,7 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'author_id',
     ];
 
     /**
@@ -56,6 +57,24 @@ class User extends Authenticatable
         {
             $name = $request->input('name');
             $query->where('name', 'like', "%$name%");
+        }
+        return $query;
+    }
+
+    public function isAdmin()
+    {
+        return $this->role_id === Role::ADMIN;
+    }
+
+    public function isManager()
+    {
+        return $this->role_id === Role::MANAGER;
+    }
+
+    public function scopeByAuthor($query)
+    {
+        if (auth()->user()->role_id == Role::MANAGER) {
+            $query->where('author_id', auth()->user()->id);
         }
         return $query;
     }

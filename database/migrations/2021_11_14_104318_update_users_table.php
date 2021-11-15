@@ -16,6 +16,7 @@ class UpdateUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('role_id')->default(2);
             $table->foreign('role_id')->references('id')->on('roles');
+            $table->unsignedBigInteger('author_id')->nullable();
             $table->softDeletes();
         });
     }
@@ -30,6 +31,7 @@ class UpdateUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
             $table->dropColumn('role_id');
+            $table->dropColumn('author_id');
             $table->dropSoftDeletes();
         });
     }

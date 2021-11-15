@@ -13,6 +13,8 @@ class CategoriesController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Category::class);
+
         $this->items = Category::filter($request);
         return view('categories.index', [
             'items' => $this->items->simplePaginate(10)
@@ -26,6 +28,8 @@ class CategoriesController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
+        $this->authorize('create', Category::class);
+
         DB::beginTransaction();
         try {
             $validated = $request->validated();
@@ -48,6 +52,8 @@ class CategoriesController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        $this->authorize('update', $category);
+
         DB::beginTransaction();
         try {
             $category->update($request->validated());
@@ -62,6 +68,8 @@ class CategoriesController extends Controller
 
     public function destroy(Category $category)
     {
+        $this->authorize('delete', $category);
+
         DB::beginTransaction();
         try {
             $category->delete();

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
 use App\Models\Category\Category;
+use App\Models\Employee;
 use App\Models\Post\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +16,14 @@ class PostsController extends Controller
 {
     public function index(Request $request)
     {
-        $this->items = Post::filter($request);
+        $this->authorize('viewAny', Post::class);
+
+        $this->items = Post::byUser()->filter($request);
         return view('posts.index', [
-            'items' => $this->items->simplePaginate(10)
+            'items' => $this->items->simplePaginate(10),
+            'categories' => Category::get(),
+            'employees' => Employee::get(),
+            'request_ar' => $request,
         ]);
     }
 
@@ -30,6 +36,8 @@ class PostsController extends Controller
 
     public function store(StorePostRequest $request)
     {
+        $this->authorize('create', Post::class);
+
         $validated = $request->validated();
         $validated['created_user_id'] = auth()->user()->id;
         $action = new PostSaveAction(new Post(), $validated);
@@ -56,6 +64,8 @@ class PostsController extends Controller
 
     public function update(UpdatePostRequest $request, Post $post)
     {
+        $this->authorize('update', $post);
+        
         $action = new PostSaveAction($post, $request->validated());
 
         DB::beginTransaction();
@@ -72,6 +82,8 @@ class PostsController extends Controller
 
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
+
         DB::beginTransaction();
         try {
             $post->delete();

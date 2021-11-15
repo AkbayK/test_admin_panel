@@ -16,7 +16,9 @@ class EmployeeUsersController extends Controller
 {
     public function index(Request $request)
     {
-        $this->items = User::employee()->filter($request);
+        $this->authorize('viewAny', Employee::class);
+
+        $this->items = User::employee()->byAuthor()->filter($request);
         return view('employees.index', [
             'items' => $this->items->simplePaginate(10)
         ]);
@@ -29,10 +31,13 @@ class EmployeeUsersController extends Controller
 
     public function store(StoreEmployeeRequest $request)
     {
+        $this->authorize('create', Employee::class);
+        
         DB::beginTransaction();
         try {
             $validated = $request->validated();
             $validated['role_id'] = Role::EMPLOYEE;
+            $validated['author_id'] = auth()->user()->id;
             $validated['password'] = Hash::make($validated['password']);
             $item = User::create($validated);
             DB::commit();
@@ -53,6 +58,8 @@ class EmployeeUsersController extends Controller
 
     public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
+        $this->authorize('update', $employee);
+
         DB::beginTransaction();
         try {
             $validated = $request->validated();
@@ -71,6 +78,8 @@ class EmployeeUsersController extends Controller
 
     public function destroy(Employee $employee)
     {
+        $this->authorize('delete', $employee);
+
         DB::beginTransaction();
         try {
             $employee->delete();

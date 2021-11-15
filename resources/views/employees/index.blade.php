@@ -7,7 +7,7 @@
 
 <div class="card card-default">
 	<div class="card-header">
-		Категории
+		Сотрудники
 	</div>
 	<div class="card-body">
 		<table class="table">

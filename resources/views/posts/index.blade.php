@@ -65,7 +65,7 @@
 	<br>
 
 	<div class="card-header">
-		Категории
+		Записи
 	</div>
 	<div class="card-body">
 		<table class="table">

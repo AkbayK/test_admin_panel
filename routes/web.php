@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Categories\CategoriesController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Posts\PostsController;
+use App\Http\Controllers\Users\EmployeeUsersController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,8 +24,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::resource('posts', PostsController::class);
+    Route::resource('categories', CategoriesController::class);
+    Route::resource('employee', EmployeeUsersController::class);
+});

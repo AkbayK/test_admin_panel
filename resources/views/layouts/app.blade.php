@@ -16,6 +16,9 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @yield('css')
+    @yield('styles')
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -61,7 +64,7 @@
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        {{ __('Выйти') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -76,8 +79,43 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
-        </main>
+            @if (Auth::check())
+                <div class="container">
+                    @if(session()->has('success'))
+                        <div class="alert alert-success">
+                            {{ session()->get('success') }}
+                        </div>
+                    @endif
+                    <div class="row">
+                        <div class="col-md-2">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <a href="{{ route('posts.index') }}">Записи</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ route('employee.index') }}">Сотрудники</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ route('categories.index') }}">Категории</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-10">
+                            @yield('content')
+                        </div>
+                    </div>               
+                </div>
+             @else
+                 @yield('content')
+             @endif
+         </main>
     </div>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    @yield('scripts')
+    @stack('scripts')
 </body>
 </html>

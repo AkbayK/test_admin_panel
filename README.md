@@ -1,4 +1,4 @@
-<p>Copy .env.example</p>
+<p>Copy .env.example into .env</p>
 <p>composer install</p>
 <p>php artisan key:generate</p>
 <p>npm install && npm run dev</p>
